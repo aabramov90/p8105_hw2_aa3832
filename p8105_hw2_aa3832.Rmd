@@ -104,4 +104,15 @@ These data are obtained from the Mr. Trash Wheel dataset which reports on discar
 
 In this data set, the median number of sports balls collected in 2017 is `r trashwheel_df_2017_sports_balls` and the sum precipitation in 2017 was `r sum_precip_2018` inches.
 
- 
+## Problem 2
+
+### Read in dataset
+
+```{r}
+nyc_transit_df =
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv" %>% 
+             janitor::make_clean_names() %>% 
+             drop_na(dumpster)
+  )
+```
+
