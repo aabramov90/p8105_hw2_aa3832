@@ -11,6 +11,8 @@ library(readxl)
 ```
 
 ## Problem 1
+ 
+### Trash Wheel, sports balls data.
 
 Read in and clean up the Mr. Trashwheel dataset
 ```{r}
@@ -24,6 +26,8 @@ trashwheel_df =
         sports_balls = round(sports_balls),
         sports_balls = as.integer(sports_balls))
 ```
+
+### Trash Wheel, precipitation data.
 
 Read in precipitation excel spreadsheet for the 2018 and 2017 data.  
 
@@ -47,13 +51,13 @@ precip_2017 =
       relocate(year)
 ```
 
-### Now bind 2017 and 2018 precipitation data.
+### Binding 2017 and 2018 precipitation data.
 
 ```{r}
   precip_df = bind_rows(precip_2017, precip_2018)
 ```
 
-### Create a month number to month name tibble.
+Creating a month number to month name tibble:
 
 ```{r}
 month_df = 
@@ -63,9 +67,41 @@ month_df =
   )
 ```
 
-### Include a month name 
+### 2017 and 2018 Precipitation Data 
 
+Include a month name column and relocating columns for improved visualization.
 ```{r}
-left_join(precip_df, month_df, by = "month")
+precip_df_2 = 
+  left_join(precip_df, month_df, by = "month") %>% 
+  relocate(year, month_name, month, total)
 ```
 
+Total precipitation in 2018
+
+```{r}
+sum_precip_2018 = select(precip_2018, total) %>% 
+  sum()
+```
+
+Median number of sports balls in 2017
+
+```{r}
+trashwheel_df_2017_sports_balls = 
+  read_xlsx("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+      sheet = "Mr. Trash Wheel",
+      range = cell_cols("A:N")) %>% 
+      janitor::clean_names() %>% 
+      drop_na(dumpster) %>% 
+      filter(year == "2017") %>% 
+      pull(sports_balls) %>% 
+      median()
+```
+
+
+### Discussion
+
+These data are obtained from the Mr. Trash Wheel dataset which reports on discarded items collected from the Inner Harbor in Baltimore, MD and stores it in a dumpster. There are a total of `r nrow(trashwheel_df)`in our final dataset. These data also include precipitation amounts by month.  
+
+In this data set, the median number of sports balls collected in 2017 is `r trashwheel_df_2017_sports_balls` and the sum precipitation in 2017 was `r sum_precip_2018` inches.
+
+ 
