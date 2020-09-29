@@ -110,9 +110,37 @@ In this data set, the median number of sports balls collected in 2017 is `r tras
 
 ```{r}
 nyc_transit_df =
-  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv" %>% 
-             janitor::make_clean_names() %>% 
-             drop_na(dumpster)
-  )
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>%
+  select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada)
+```
+
+Data cleaning, and recoding the entry column to 1,0
+
+```{r}
+nyc_transit_df =
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>%
+  select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada) %>% 
+   mutate(entry = ifelse(entry == "NO",0,1))
+```
+
+Determing the number of istinct stations code
+
+```{r}
+nrow(distinct(nyc_transit_df, station_name))
+```
+
+Determing the number of ADA compliant stations
+
+```{r}
+ada_compliant = 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>%
+  select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada) %>% 
+   mutate(ada = ifelse(ada == "TRUE",1,0)) %>% 
+    filter(ada == "1") %>% 
+    distinct(station_name) %>% 
+    nrow()
 ```
 
