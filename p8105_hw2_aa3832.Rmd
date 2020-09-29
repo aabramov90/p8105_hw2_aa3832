@@ -163,3 +163,7 @@ entry_vending_df =
               nrow()
 ```
 
+```{r}
+
+```
+
