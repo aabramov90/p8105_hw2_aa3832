@@ -1,6 +1,8 @@
 ---
 title: "Homework 2"
-output: github_document
+author: Alexey Abramov
+output: 
+  github_document
 ---
 
 # Setup
@@ -67,7 +69,7 @@ month_df =
   )
 ```
 
-### 2017 and 2018 Precipitation Data 
+### Cleaning up 2017 and 2018 Precipitation Data 
 
 Include a month name column and relocating columns for improved visualization.
 ```{r}
@@ -98,7 +100,7 @@ trashwheel_df_2017_sports_balls =
 ```
 
 
-### Discussion
+### Mr. Trash Wheel Discussion
 
 These data are obtained from the Mr. Trash Wheel dataset which reports on discarded items collected from the Inner Harbor in Baltimore, MD and stores it in a dumpster. There are a total of `r nrow(trashwheel_df)`in our final dataset. These data also include precipitation amounts by month.  
 
@@ -106,7 +108,9 @@ In this data set, the median number of sports balls collected in 2017 is `r tras
 
 ## Problem 2
 
-### Read in dataset
+### NYC Transit dataset
+
+Read in dataset, cleaning up columns
 
 ```{r}
 nyc_transit_df =
@@ -115,7 +119,7 @@ nyc_transit_df =
   select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada)
 ```
 
-Data cleaning, and recoding the entry column to 1,0
+More data cleaning, and recoding  entry column to logical vector with 1,0
 
 ```{r}
 nyc_transit_df =
@@ -125,13 +129,13 @@ nyc_transit_df =
    mutate(entry = ifelse(entry == "NO",0,1))
 ```
 
-Determing the number of istinct stations code
+Calculating the number of distinct stations 
 
 ```{r}
 nrow(distinct(nyc_transit_df, station_name))
 ```
 
-Determing the number of ADA compliant stations
+Calculating the number of ADA compliant stations
 
 ```{r}
 ada_compliant = 
@@ -142,5 +146,20 @@ ada_compliant =
     filter(ada == "1") %>% 
     distinct(station_name) %>% 
     nrow()
+```
+
+Calculating the number of stations with entry that do not have vending.
+
+```{r}
+entry_vending_df = 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+    janitor::clean_names() %>%
+     select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada) %>% 
+        mutate(vending = ifelse(vending == "YES",1,0)) %>% 
+        mutate(entry = ifelse(entry == "NO",0,1)) %>% 
+          filter(vending == "0") %>% 
+          filter(entry == "1") %>% 
+            distinct(station_name) %>% 
+              nrow()
 ```
 
