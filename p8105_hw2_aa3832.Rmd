@@ -6,7 +6,6 @@ output:
 ---
 
 # Setup
-
 ```{r, setup}
 library(tidyverse)
 library(readxl)
@@ -14,7 +13,7 @@ library(readxl)
 
 ## Problem 1
  
-### Trash Wheel, sports balls data.
+### Mr. Trash Wheel, sports balls data.
 
 Read in and clean up the Mr. Trashwheel dataset
 ```{r}
@@ -102,7 +101,7 @@ trashwheel_df_2017_sports_balls =
 
 ### Mr. Trash Wheel Discussion
 
-These data are obtained from the Mr. Trash Wheel dataset which reports on discarded items collected from the Inner Harbor in Baltimore, MD and stores it in a dumpster. There are a total of `r nrow(trashwheel_df)`in our final dataset. These data also include precipitation amounts by month.  
+These data are obtained from the Mr. Trash Wheel dataset which reports on discarded items collected from the Inner Harbor in Baltimore, MD and stores it in a dumpster. There are a total of `r nrow(trashwheel_df)` rows in our final dataset. These data also include precipitation amounts by month.  
 
 In this data set, the median number of sports balls collected in 2017 is `r trashwheel_df_2017_sports_balls` and the sum precipitation in 2017 was `r sum_precip_2018` inches.
 
@@ -144,8 +143,9 @@ ada_compliant =
   select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada) %>% 
    mutate(ada = ifelse(ada == "TRUE",1,0)) %>% 
     filter(ada == "1") %>% 
-    distinct(station_name) %>% 
-    nrow()
+    distinct(station_name)
+
+nrow(ada_compliant)
 ```
 
 Calculating the number of stations with entry that do not have vending.
@@ -159,11 +159,30 @@ entry_vending_df =
         mutate(entry = ifelse(entry == "NO",0,1)) %>% 
           filter(vending == "0") %>% 
           filter(entry == "1") %>% 
-            distinct(station_name) %>% 
-              nrow()
+            distinct(station_name)
+
+nrow(entry_vending_df)
 ```
 
+Creating distinct route name and route number variables.  
 ```{r}
+route_df = 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+    janitor::clean_names() %>%
+     select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada) %>% 
+            distinct(across(route1:11), .keep_all = TRUE)
+```
 
+Calculating the number of distinct A train stations
+
+```{r}
+route_A_df = 
+    read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+    janitor::clean_names() %>%
+     select(line, station_name, station_latitude, station_longitude, route1:route11, entrance_type, entry, vending, ada) %>% 
+            distinct(across(route1:11), .keep_all = TRUE) %>% 
+              filter(route1 == "A")
+
+nrow(route_A_df)
 ```
 
