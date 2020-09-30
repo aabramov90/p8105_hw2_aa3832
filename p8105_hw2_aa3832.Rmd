@@ -173,7 +173,7 @@ entry_vending_df =
 nrow(entry_vending_df)
 ```
 
-There are `r nrow(entry_vending_df)` stations that have entrances but do not have vending.  There are a total of `r nrow(distinct(nyc_transit_df, line, station_name))` stations.  
+There are `r nrow(entry_vending_df)` stations that have entrances but do not have vending.  There are a total of `r nrow(distinct(nyc_transit_df, line, station_name))` stations, which means `r nrow(entry_vending_df)/nrow(distinct(nyc_transit_df, line, station_name))` do not have vending.  
 
 #### Reformatting to create distinct route name and route number variables. 
 
