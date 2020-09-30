@@ -247,7 +247,7 @@ Reformatting month number with the month name.
 ```{r}
 pols_month_df = 
   left_join(pols_month_df, month_df, by = "month")  %>%        
-  relocate(year, month_name, president)
+  relocate(year, month_name, president) 
 ```
 
 Data cleaning snp dataset
@@ -257,17 +257,45 @@ snp_df =
   read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
     janitor::clean_names() %>% 
     separate(date, into = c("month", "day", "year"), sep="/") %>%  
-      mutate_at(vars(month), as.numeric)
+      mutate_at(vars(month, year), as.numeric)
 ```
 
 Binding to reformat month number to month name in snp dataset
 
 ```{r}
-left_join(snp_df, month_df, by = "month") %>% 
-  relocate(year, month_name)
+snp_df = left_join(snp_df, month_df, by = "month") %>% 
+  subset(select = c(year, month_name, close))
+snp_df
 ```
 
-Read in 
+Read in unemployment dataset.
+
+```{r}
+unemployment_df = 
+  read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+    rename(January = jan, February = feb, March = mar, April = apr, May = 
+             may, June = jun, July = jul, August = aug, September = sep, 
+             October = oct, November = nov, December = dec) %>% 
+        pivot_longer(January:December,
+                names_to = "month",
+                values_to = "unemployment_percent") %>% 
+          mutate_at(vars(year), as.numeric) %>%
+            rename(month_name = month)
+```
+
+Putting it all together, binding pols, snp and unemployment for the triple play!
+
+```{r}
+double_play_df =
+  left_join(pols_month_df, snp_df, by = c("year", "month_name"))
+
+triple_play_df =
+  left_join(double_play_df, unemployment_df, by = c("year", "month_name"))
+```
+
+
+
 Problem 3
 This problem uses the FiveThirtyEight data; these data were gathered to create the interactive graphic on this page. In particular, we’ll use the data in pols-month.csv, unemployment.csv, and snp.csv. Our goal is to merge these into a single data frame using year and month as keys across datasets.
 
