@@ -173,7 +173,7 @@ entry_vending_df =
 nrow(entry_vending_df)
 ```
 
-There are `r nrow(entry_vending_df)` stations that have entrances but do not have vending.  
+There are `r nrow(entry_vending_df)` stations that have entrances but do not have vending.  There are a total of `r nrow(distinct(nyc_transit_df, line, station_name))` stations.  
 
 #### Reformatting to create distinct route name and route number variables. 
 
@@ -221,20 +221,18 @@ nrow(ada_compliant_A_df)
 
 There are `r nrow(route_A_df)` distinct A stations in the NYC transit system. Of which, `r nrow(ada_compliant_A_df)` are ADA compliant. 
 
-#### Cleaning up route name and route number
-
-```{r}
-route_df
-```
-
-
 # Problem 3
 
 #### Read in FiveThirtyEight data pols-month
 
 ```{r}
+library(lubridate)
+
 pols_month_df = 
   read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
-    janitor::clean_names()
+    janitor::clean_names() %>% 
+      mutate(mon = ymd(mon)) %>% 
+      mutate_at(vars(mon), funs(year, month, day)) %>% 
+      relocate(year, month, day)
 ```
 
