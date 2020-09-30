@@ -226,7 +226,7 @@ There are `r nrow(route_A_df)` distinct A stations in the NYC transit system. Of
 
 #### Read in FiveThirtyEight data pols-month
 
-Data cleaning pols_month dataframe.
+Data cleaning pols_month dataset
 ```{r}
 library(lubridate)
 
@@ -250,21 +250,24 @@ pols_month_df =
   relocate(year, month_name, president)
 ```
 
-Data cleaning snp dataframe.
+Data cleaning snp dataset
 
 ```{r}
 snp_df = 
   read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
     janitor::clean_names() %>% 
-    separate(date, into = c("month", "day", "year"), sep="/")
+    separate(date, into = c("month", "day", "year"), sep="/") %>%  
+      mutate_at(vars(month), as.numeric)
 ```
 
-Binding to reformat month number to month name.
+Binding to reformat month number to month name in snp dataset
+
 ```{r}
-snp_df = 
-  left_join(snp_df, month_df, by = "month")
+left_join(snp_df, month_df, by = "month") %>% 
+  relocate(year, month_name)
 ```
 
+Read in 
 Problem 3
 This problem uses the FiveThirtyEight data; these data were gathered to create the interactive graphic on this page. In particular, we’ll use the data in pols-month.csv, unemployment.csv, and snp.csv. Our goal is to merge these into a single data frame using year and month as keys across datasets.
 
